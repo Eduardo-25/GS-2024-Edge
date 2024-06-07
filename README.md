@@ -1,5 +1,7 @@
-# GS-2024-Edge
-Global Solution de Edge 2024 OceanGuard
+# GS-2024-Edge-Python
+Global Solution de Edge e python 2024 
+
+OceanGuard
 
 Este é um projeto para criar um sensor subaquático que monitora a temperatura da água usando um sensor DS18B20, além de medir a salinidade e o nível de oxigênio dissolvido na água. O projeto utiliza um Arduino, um módulo RTC DS1307 e sensores analógicos para medir a salinidade e o nível de oxigênio.
 
