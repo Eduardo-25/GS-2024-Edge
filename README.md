@@ -1,5 +1,5 @@
-# GS-2024-Edge-Python
-Global Solution de Edge e python 2024 
+# GS-2024-Edge
+Global Solution de Edge 2024 
 
 OceanGuard
 
