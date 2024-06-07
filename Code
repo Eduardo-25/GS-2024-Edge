@@ -1,0 +1,72 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <Wire.h>
+#include <RTClib.h>
+
+#define ONE_WIRE_BUS 2 // Pino digital conectado ao DS18B20
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+RTC_DS3231 rtc;
+
+// Pinos analógicos para salinidade e oxigênio dissolvido
+const int salinityPin = A0;
+const int oxygenPin = A1;
+
+void setup() {
+  Serial.begin(9600);
+  sensors.begin();
+
+  if (!rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    while (1);
+  }
+
+  if (rtc.lostPower()) {
+    Serial.println("RTC lost power, let's set the time!");
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+}
+
+void loop() {
+  DateTime now = rtc.now();
+
+  // Formatar a data no formato DD/MM/YYYY
+  Serial.print(now.day() < 10 ? "0" : ""); // Adiciona um zero à esquerda, se o dia for menor que 10
+  Serial.print(now.day());
+  Serial.print("/");
+  Serial.print(now.month() < 10 ? "0" : ""); // Adiciona um zero à esquerda, se o mês for menor que 10
+  Serial.print(now.month());
+  Serial.print("/");
+  Serial.print(now.year());
+  Serial.print(" - ");
+
+  // Leitura da temperatura do DS18B20
+  sensors.requestTemperatures();
+  float tempC = sensors.getTempCByIndex(0);
+  if (tempC == DEVICE_DISCONNECTED_C) {
+    Serial.println("Failed to read from DS18B20 sensor!");
+    return;
+  }
+  Serial.print("Temperature: ");
+  Serial.print(tempC);
+  Serial.println(" °C");
+
+  // Leitura de salinidade
+  int salinityValue = analogRead(salinityPin);
+  float salinity = map(salinityValue, 0, 1023, 0, 100); // Exemplo de mapeamento
+  Serial.print("Salinity: ");
+  Serial.print(salinity);
+  Serial.println(" ppt");
+
+  // Leitura de oxigênio dissolvido
+  int oxygenValue = analogRead(oxygenPin);
+  float oxygen = map(oxygenValue, 0, 1023, 0, 14); // Exemplo de mapeamento de 0 a 14 mg/L
+  Serial.print("Dissolved Oxygen: ");
+  Serial.print(oxygen);
+  Serial.println(" mg/L");
+
+  delay(2000);
+}
+
